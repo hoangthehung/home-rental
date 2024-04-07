@@ -2,18 +2,29 @@ spring:
   application:
     name: homerental
   datasource:
-    url: jdbc:mysql://localhost:3306/spring_social?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
-    username: root
-    password: callicoder
-
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    properties:
+    url: jdbc:postgresql://localhost:5432/postgres?useTimezone=true&serverTimezone=UTC&useSSL=false&&currentSchema=rental
+    username: postgres
+    password: test
+    testWhileIdle: true
+    validationQuery: 'SELECT 1'
+    hikari:
+      minimum-idle: ${DB_POOL_SIZE_MIN:50}
+      maximum-pool-size: ${DB_POOL_SIZE_MAX:100}
+      connectionTimeout: 30000
+    jpa:
+      show-sql: true
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        ddl-auto: none
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          jdbc:
+            lob:
+              non_contextual_creation: true
+
+
+
   security:
     oauth2:
       client:

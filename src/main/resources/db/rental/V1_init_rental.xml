@@ -1,0 +1,145 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="RENTAL_1" author="hoangthehung@gmail.com" labels="rental">
+        <comment>init for rental schema</comment>
+        <sql>
+            CREATE SCHEMA rental;
+            CREATE TABLE rental.address
+            (
+                id        serial4 NOT NULL,
+                street    varchar(200) NULL,
+                ward      varchar(50) NULL,
+                district  varchar(50) NULL,
+                province  varchar(50) NULL,
+                country   varchar(60) NULL,
+                postcode  varchar(10) NULL,
+                latitude  float8 NULL,
+                longitude float8 NULL,
+                CONSTRAINT address_pkey PRIMARY KEY (id)
+            );
+
+
+            CREATE TABLE rental.contract
+            (
+                id                 serial4   NOT NULL,
+                properties_id      int4      NOT NULL,
+                owner_id           int4      NOT NULL,
+                tenant_id          int4      NOT NULL,
+                price              float8    NOT NULL,
+                deposit_amount     float8 NULL,
+                start_time_payment int4 NULL,
+                notice_period      int4 NULL,
+                start_time         timestamp NOT NULL,
+                end_time           timestamp NOT NULL,
+                CONSTRAINT contract_pkey PRIMARY KEY (id)
+            );
+
+
+            CREATE TABLE rental.images
+            (
+                id          bigserial    NOT NULL,
+                image_url   varchar(255) NOT NULL,
+                mime_type   varchar(50) NULL,
+                description text NULL,
+                created     timestamp NULL,
+                CONSTRAINT images_pkey PRIMARY KEY (id)
+            );
+
+            CREATE TABLE rental.messages
+            (
+                id          bigserial NOT NULL,
+                sender_id   int4      NOT NULL,
+                receiver_id int4      NOT NULL,
+                "content"   text NULL,
+                created     timestamp NULL,
+                CONSTRAINT messages_pkey PRIMARY KEY (id)
+            );
+
+
+            CREATE TABLE rental.payment
+            (
+                id             serial4     NOT NULL,
+                user_id        int4        NOT NULL,
+                amount         float8      NOT NULL,
+                status         int4 NULL,
+                "type"         varchar(50) NOT NULL,
+                payment_date   timestamp NULL,
+                payment_method varchar(50) NULL,
+                transaction_id varchar(50) NULL,
+                CONSTRAINT payment_pkey PRIMARY KEY (id)
+            );
+
+
+            CREATE TABLE rental.promotions
+            (
+                id           serial4     NOT NULL,
+                code         varchar(50) NOT NULL,
+                expired_time timestamp NULL,
+                "type"       varchar(20) NULL,
+                value        float8 NULL,
+                owner_by     int4 NULL,
+                used_by      int4 NULL,
+                created      timestamp NULL,
+                CONSTRAINT promotions_pkey PRIMARY KEY (id)
+            );
+
+
+            CREATE TABLE rental.properties
+            (
+                id              serial4 NOT NULL,
+                "name"          varchar(250) NULL,
+                address_id      int4    NOT NULL,
+                "type"          varchar(10) NULL,
+                price           float8  NOT NULL,
+                "size"          float8 NULL,
+                target_customer varchar(10) NULL,
+                facilities      varchar(200) NULL,
+                num_paxs        int4 NULL,
+                num_beds        int4 NULL,
+                num_toilets     int4 NULL,
+                description     varchar(500) NULL,
+                owner_id        int4    NOT NULL,
+                CONSTRAINT properties_pkey PRIMARY KEY (id)
+            );
+
+
+            CREATE TABLE rental.subscribers
+            (
+                id          serial4 NOT NULL,
+                user_id     int4    NOT NULL,
+                start_time  timestamp NULL,
+                period_days int4 NULL,
+                "type"      int4 NULL,
+                CONSTRAINT subscribers_pkey PRIMARY KEY (id)
+            );
+
+            CREATE TABLE rental.users
+            (
+                id              serial4       NOT NULL,
+                "name"          varchar(256) NULL,
+                username        varchar(256)  NOT NULL,
+                "password"      varchar(2000) NOT NULL,
+                email           varchar(256) NULL,
+                gender          varchar(6) NULL,
+                dob             timestamp NULL,
+                avatar          int8 NULL,
+                id_type         varchar(50) NULL,
+                id_number       varchar(20) NULL,
+                id_expired_date timestamp NULL,
+                id_issuer       varchar(500) NULL,
+                phone           varchar(15) NULL,
+                status          varchar(25)   NOT NULL,
+                address_id      int4 NULL,
+                created         timestamp     NOT NULL DEFAULT now(),
+                "type"          int4 NULL,
+                provider        varchar(7) NULL,
+                provider_id     varchar(20) NULL,
+                image_url       varchar(255) NULL,
+                CONSTRAINT users_pkey PRIMARY KEY (id)
+            );
+        </sql>
+        <rollback>
+            DROP SCHEMA rental;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

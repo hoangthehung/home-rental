@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.liquibase.gradle' version '2.2.1'
 }
 
 group = 'com.example'
@@ -12,6 +13,7 @@ java {
 }
 
 configurations {
+    liquibaseRuntime.extendsFrom runtime
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -35,7 +37,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.liquibase:liquibase-core'
+
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.16.1'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.2'
+    liquibaseRuntime 'info.picocli:picocli:4.6.1'
+    liquibaseRuntime("ch.qos.logback:logback-core:1.2.3")
+    liquibaseRuntime("ch.qos.logback:logback-classic:1.2.3")
+    liquibaseRuntime 'org.postgresql:postgresql'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
@@ -51,4 +60,20 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+//
+//liquibase {
+//    jvmArgs "-Duser.dir=$project.projectDir/reo"
+//}
+liquibase {
+    jvmArgs "-Duser.dir=$project.projectDir"
+    activities {
+        main {
+            changelogFile 'src/main/resources/db/mainCHangelog.xml'
+            url 'jdbc:postgresql://localhost:5432/postgres'
+            username 'postgres'
+            password 'test'
+            logLevel "info"
+        }
+    }
 }
